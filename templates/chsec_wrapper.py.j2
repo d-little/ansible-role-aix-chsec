@@ -1,0 +1,9 @@
+{% for file, contents in chsec.iteritems() -%}
+{% for stanza, kvs in contents.iteritems() -%}
+{% for k, v in kvs.iteritems() -%}
+(lssec -f {{ file }} -s {{ stanza }} -a {{ k -}}
+|grep -q 'default {{ k }}={{ v -}}
+') && echo nochange || chsef -f {{ file }} -s {{ stanza }} -a {{ k }}={{ v }}
+{% endfor -%}
+{% endfor -%}
+{% endfor %}

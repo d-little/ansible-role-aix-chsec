@@ -1,0 +1,77 @@
+---
+- name: debugoutput
+  debug:
+    msg: "{{ role_path }} -- {{ playbook_dir }}"
+
+- name: Import Default Variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        # Placeholders, really, in case we want to support multiple versions of Ansible/AIX
+        #  99.9% of the time we should be using default.yml
+        - "{{ ansible_distribution }}_{{ ansible_distribution_lts_version }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}_{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - default.yml
+      paths:
+        - '{{ role_path }}/vars'
+        - '{{ playbook_dir }}/vars'
+      skip: true
+
+- name: Set defaults
+  block:
+    # - name: Define 'varname'
+    #   set_fact:
+    #     varname: "{{ __varname }}"
+    #   when: varname is not defined
+
+    - name: Define 'chsec'
+      set_fact:
+        chsec: "{{ __chsec }}"
+      when: chsec is not defined
+
+    - name: Define 'chsec_enable'
+      set_fact:
+        chsec_enable: "{{ __chsec_enable }}"
+      when: chsec_enable is not defined
+    
+    - name: Define 'chsec_backup'
+      set_fact:
+        chsec_backup: "{{ __chsec_backup }}"
+      when: chsec_backup is not defined
+
+    - name: Define 'chsec_backupdir'
+      set_fact:
+        chsec_backupdir: "{{ __chsec_backupdir }}"
+      when: chsec_backupdir is not defined
+
+    # - name: Define 'chsec_skip_defaults'
+    #   set_fact:
+    #     chsec_skip_defaults: "{{ __chsec_skip_defaults }}"
+    #   when: chsec_skip_defaults is not defined
+
+    # - name: Define 'chsec_use_templates'
+    #   set_fact:
+    #     chsec_use_templates: "{{ __chsec_use_templates }}"
+    #   when: chsec_use_templates is not defined
+
+    # - name: Define '_chsec_allow_reload'
+    #   set_fact:
+    #     chsec_allow_reload: "{{ __chsec_allow_reload }}"
+    #   when: chsec_allow_reload is not defined
+
+    - name: Define 'chsec_command'
+      set_fact:
+        chsec_command: "{{ __chsec_command }}"
+      when: chsec_command is not defined
+
+    - name: Define 'lssec_command'
+      set_fact:
+        lssec_command: "{{ __lssec_command }}"
+      when: lssec_command is not defined
+
+    - name: Define 'chsec_managed_files'
+      set_fact:
+        chsec_managed_files: "{{ __chsec_managed_files }}"
+      when: chsec_managed_files is not defined

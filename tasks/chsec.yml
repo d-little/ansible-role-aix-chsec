@@ -1,0 +1,27 @@
+---
+# backups
+# to-do: Do not try to copy files we've already copied.
+- name: Backup files that are to be changed.
+  copy:
+      remote_src: yes
+      backup: yes
+      dest: "{{ chsec_backupdir }}/{{ item.file | basename }}.{{ ansible_date_time.iso8601_basic_short }}" 
+      src: "{{ item.file }}"
+  when: 
+    - chsec_backup|bool
+  loop: "{{ chsec }}"
+
+- name: Debug chsec contents
+  debug:
+    var: chsec
+    verbosity: 2
+
+# Run chsec commands
+- name: Run chsec commands.
+  shell: >
+    ( {{ lssec_command }} -f '{{ item.file }}' -s '{{ item.stanza }}' -a '{{ item.key }}' | grep -q '{{ item.stanza }} {{ item.key }}={{ item.value }}' ) && echo nochange || {{ chsec_command }} -f '{{ item.file }}' -s '{{ item.stanza }}' -a '{{ item.key }}={{ item.value }}'
+  register: chsec_output
+  changed_when: chsec_output.stdout != 'nochange'
+  loop: "{{ chsec }}"
+  when:
+    - item.file in chsec_managed_files

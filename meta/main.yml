@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  author: David Little
+  description: Role to wrap AIX command `chsec` 
+  license: MIT
+  min_ansible_version: 1.8
+  platforms:
+  - name: AIX
+    versions:
+    - 7.1
+    - 7.2
+  galaxy_tags:
+  - aix
+dependencies: []

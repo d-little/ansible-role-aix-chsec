@@ -1,0 +1,6 @@
+---
+
+- include_tasks: variables.yml
+
+- include_tasks: chsec.yml
+  when: chsec_enable|bool

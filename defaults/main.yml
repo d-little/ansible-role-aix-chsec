@@ -1,0 +1,54 @@
+---
+### VARS DEFAULTS
+### The following are defaults for files managed by chsec.
+### They should not be set directly by role users. If you really
+### need to override them, use the corresponding, unprefixed variables (eg
+### `chsec_managed_files` to override __chsec_managed_files).
+
+### USER OPTIONS
+# Blank initial list for 'chsec' yaml
+__chsec: []
+
+# Set to False to disable this role completely
+__chsec_enable: True
+
+# If the below is true, create a backup of the config files before making changes
+__chsec_backup: False
+__chsec_backupdir: '/tmp/'
+
+# Don't apply OS defaults when set to true
+#NOTIMP: __chsec_skip_defaults: true
+
+# Deploy new templates before running chsec commands
+#NOTIMP: __chsec_use_templates: false
+
+# If the below is false, don't reload daemons on change
+#NOTIMP: __chsec_allow_reload: false
+
+__chsec_command: /usr/bin/chsec
+__lssec_command: /usr/bin/lssec
+
+### The official ibm documentation for AIX 7.2 lists /etc/security/group 
+### twice and doesnt list all of these in both lists.  This an exhaustive
+### merger of IBM's two lists.  
+__chsec_managed_files:
+  - /etc/nscontrol.conf
+  - /etc/secvars.cfg
+  - /etc/security/domains
+  - /etc/security/environ
+  - /etc/security/group
+  - /etc/security/lastlog
+  - /etc/security/limits
+  - /etc/security/login.cfg
+  - /etc/security/passwd
+  - /etc/security/portlog
+  - /etc/security/pwdalg.cfg
+  - /etc/security/roles
+  - /etc/security/smitacl.group
+  - /etc/security/smitacl.user
+  - /etc/security/user
+  - /etc/security/user.roles
+  - /etc/security/audit/hosts
+  - /etc/security/enc/LabelEncodings
+  - /etc/security/rtc/rtcd_policy.conf
+  - /usr/lib/security/mkuser.default

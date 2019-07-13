@@ -142,4 +142,3 @@ chsec:
 | /etc/security/enc/LabelEncodings    | Contains label definitions for the Trusted AIX system. | [7.2](https://www.ibm.com/support/knowledgecenter/en/ssw_aix_72/com.ibm.aix.security/taix_cust_le_file.htm)
 | /etc/security/rtc/rtcd_policy.conf  | Contains the configuration information for the rtcd daemon. | [7.2](https://www.ibm.com/support/knowledgecenter/en/ssw_aix_72/com.ibm.aix.files/rtcd.policy.cnf.htm)
 | /usr/lib/security/mkuser.default    | Contains the default values for new users. | [7.2](https://www.ibm.com/support/knowledgecenter/en/ssw_aix_71/com.ibm.aix.files/mkuser.default.htm)
-# ansible-role-aix-chsec

@@ -25,7 +25,6 @@
     #   set_fact:
     #     varname: "{{ __varname }}"
     #   when: varname is not defined
-
     - name: Define 'chsec'
       set_fact:
         chsec: "{{ __chsec }}"

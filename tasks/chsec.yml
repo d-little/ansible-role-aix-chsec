@@ -16,13 +16,10 @@
     var: chsec
     verbosity: 2
 
-# Run chsec commands
 - name: Run chsec commands.
-  # shell: >
-  #   ( {{ lssec_command }} -f '{{ item.file }}' -s '{{ item.stanza }}' -a '{{ item.key }}' | grep -q '{{ item.stanza }} {{ item.key }}={{ item.value }}' ) && echo nochange || {{ chsec_command }} -f '{{ item.file }}' -s '{{ item.stanza }}' -a '{{ item.key }}={{ item.value }}'
-  # register: chsec_output
-  # changed_when: chsec_output.stdout != 'nochange'
-  aix_chsec:
+  # Find local_aix_chsec in ../library/local_aix_chsec.py
+  # I've named it local_* in case the pull request ever gets accepted and we dont step on the 'official' chsec role'
+  local_aix_chsec:
     path: "{{ item.file }}"
     stanza: "{{ item.stanza }}"
     attrs: " {{ item.attrs }}"

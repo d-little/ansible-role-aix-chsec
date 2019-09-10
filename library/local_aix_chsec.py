@@ -25,12 +25,12 @@ version_added: '2.9'
 description:
 - Modify stanza attributes to AIX config files using the C(chsec) command.
 options:
-  path:
+  file:
     description:
-      - Path to the stanza file.
+      - File path to the stanza file.
     type: path
     required: true
-    aliases: [ dest ]
+    aliases: [ path, dest ]
   stanza:
     description:
     - Name of stanza.
@@ -66,7 +66,7 @@ author:
 EXAMPLES = r'''
 - name: Add an LDAP user stanza
   aix_chsec:
-    path: /etc/security/user
+    file: /etc/security/user
     stanza: ldapuser
     attrs:
       SYSTEM: LDAP
@@ -74,14 +74,14 @@ EXAMPLES = r'''
     state: present
 - name: Change login times for user
   aix_chsec:
-    path: /etc/security/user
+    file: /etc/security/user
     stanza: ldapuser
     attrs:
       logintimes: :0800-1700
     state: present
 - name: Remove registry attribute from stanza
   aix_chsec:
-    path: /etc/security/user
+    file: /etc/security/user
     stanza: ldapuser
     attrs:
       SYSTEM: LDAP
@@ -127,7 +127,7 @@ def attrs2dict(attrs):
 def set_attr_value(module, filename, stanza, attr, value):
     '''Sets the selected file/stanza/attr=value.  Only returns True '''
     chsec_command = module.get_bin_path('chsec', required=True)
-    cmd = [chsec_command, '-f', filename, '-s', stanza, '-a', '='.join([attr, value])]
+    cmd = [chsec_command, '-f', filename, '-s', stanza, '-a', '='.join(map(str, [attr, value]))]
     rc, stdout, stderr = module.run_command(cmd)
     if rc != 0:
         msg = 'Failed to run chsec command: ' + ' '.join(cmd)
@@ -143,9 +143,9 @@ def get_current_attr_value(module, filename, stanza, attr):
     if rc != 0:
         msg = 'Failed to run lssec command: ' + ' '.join(cmd)
         module.fail_json(msg=msg, rc=rc, stdout=stdout, stderr=stderr)
-    # Strip off whitespace and double-quotation marks that are sometimes added
-    lssec_out = stdout.splitlines()[1].split(':')[1].strip('\\\"\n ')
-    return lssec_out
+    # Strip newline and double-quotation marks that are sometimes added
+    lssec_out = stdout.splitlines()[1].split(':', 1)[1].strip('\\\"\n')
+    return str(lssec_out)
 
 
 def do_stanza(module, filename, stanza, attrs, state):
@@ -155,6 +155,7 @@ def do_stanza(module, filename, stanza, attrs, state):
     changed = 0
 
     for attr, tgt_value in attrs.items():
+        tgt_value = str(tgt_value)  # tgt_value needs to be a string for comparisons later
         if state == 'absent':
             # 'absent' sets all of the given attrs to None, regardless of given value
             tgt_value = ''
@@ -186,7 +187,7 @@ def main():
 
     module = AnsibleModule(
         argument_spec=dict(
-            path=dict(type='path', required=True, aliases=['dest']),
+            file=dict(type='path', required=True, aliases=['dest', 'path']),
             stanza=dict(type='str', required=True),
             attrs=dict(type='raw', required=True, aliases=['options']),
             state=dict(type='str', default='present', choices=['absent', 'present']),
@@ -199,12 +200,12 @@ def main():
         msg={},
     )
 
-    path = module.params['path']
+    file = module.params['file']
     stanza = module.params['stanza']
     attrs = module.params['attrs']
     state = module.params['state']
 
-    result['changed'], result['msg'] = do_stanza(module, path, stanza, attrs, state)
+    result['changed'], result['msg'] = do_stanza(module, file, stanza, attrs, state)
 
     module.exit_json(**result)
 
